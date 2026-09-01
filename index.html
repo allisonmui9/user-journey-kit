@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atlas-shard-routing-tier-1m-</title>
+    <!-- Ugly Wireframe Kit via jsDelivr CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/monsoonnyc/ugly-wireframe-kit@master/wireframe.css">
+  </head>
+  <body>
+    <!-- Wireframe filters (paste once per page) -->
+    <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <feTurbulence id="wf-rough-1" type="fractalNoise" baseFrequency="0.05" numOctaves="1" result="noise" seed="1" />
+        <feDisplacementMap id="wf-rough-1-map" in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+        <feTurbulence id="wf-rough-2" type="fractalNoise" baseFrequency="0.05" numOctaves="1" result="noise" seed="2" />
+        <feDisplacementMap id="wf-rough-2-map" in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+        <feTurbulence id="wf-rough-3" type="fractalNoise" baseFrequency="0.05" numOctaves="1" result="noise" seed="3" />
+        <feDisplacementMap id="wf-rough-3-map" in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+      </defs>
+    </svg>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script src="https://cdn.jsdelivr.net/gh/monsoonnyc/ugly-wireframe-kit@master/wireframe-icons.js"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(cd \"/Users/allisonmui/Documents/design-prototypes/atlas-shard-routing-tier\\(1M\\)\" && sed -i '' 's/fontSize={17}/fontSize={12}/; s/fontSize={15}/fontSize={12}/; s/fontSize={16}/fontSize={12}/g' src/pages/FlowDiagramPage.tsx && grep -n 'fontSize' src/pages/FlowDiagramPage.tsx)",
+      "Bash(npx oxlint *)",
+      "Bash(python3 -)"
+    ]
+  }
+}
