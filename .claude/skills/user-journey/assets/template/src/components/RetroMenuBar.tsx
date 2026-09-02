@@ -2,9 +2,11 @@ import type { ReactNode } from 'react'
 import { INK, RETRO_FONT } from '../theme'
 
 interface RetroMenuBarProps {
+  /** Shown after the diamond; defaults to the prototype's name */
+  title?: string
   /** When set, a back arrow appears at the far left */
   onBack?: () => void
-  /** Extra menu items, e.g. "Start over" on the flow page */
+  /** Extra menu items, e.g. "Start over" on a journey page */
   children?: ReactNode
 }
 
@@ -19,7 +21,7 @@ const itemStyle = {
 } as const
 
 /** The desktop menu bar, shared by every screen. */
-export default function RetroMenuBar({ onBack, children }: RetroMenuBarProps) {
+export default function RetroMenuBar({ title, onBack, children }: RetroMenuBarProps) {
   return (
     <div
       style={{
@@ -52,7 +54,7 @@ export default function RetroMenuBar({ onBack, children }: RetroMenuBarProps) {
           ◀ back
         </button>
       )}
-      <span style={{ fontWeight: 700 }}>◆ Atlas Shard Routing Tier (Enable 1M)</span>
+      <span style={{ fontWeight: 700 }}>◆ {title ?? 'User Journeys'}</span>
       {children}
       <span style={{ marginLeft: 'auto' }}>▚ 100% ▚</span>
     </div>

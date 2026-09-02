@@ -10,3 +10,12 @@ export const DESKTOP_BG =
 export const FONT_IMPORT = `
   @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 `
+
+/** Excalidraw's Virgil — the lettering inside the hand-drawn shapes */
+export const HAND_FONT_IMPORT = `
+  @font-face {
+    font-family: 'Virgil';
+    src: url('https://excalidraw.com/Virgil.woff2') format('woff2');
+    font-display: swap;
+  }
+`

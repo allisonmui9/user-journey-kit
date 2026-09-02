@@ -1,32 +1,45 @@
-# React + TypeScript + Vite
+# user-journey-skill
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A Claude Code skill that turns a written list of user-flow steps into an
+interactive, hand-drawn user journey diagram.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+write the steps in a Google Doc
+  → paste them into Claude Code, or give it the doc link
+    → Claude builds the flow with the components in this repo
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Layout
+
+```
+.claude/skills/user-journey/
+  SKILL.md                     the workflow Claude follows
+  references/
+    writing-the-doc.md         how to write the steps so they read cleanly
+    components.md              the sketch kit: shapes and annotations
+  assets/template/             the Vite + React app Claude copies per journey
+    src/journey/types.ts       the Journey data shape
+    src/journey/layout.ts      all positioning, computed from the data
+    src/components/flow/       hand-drawn nodes, arrows, scribbled UI
+    src/pages/JourneyPage.tsx  the step-by-step walkthrough renderer
+```
+
+## Using it
+
+In a Claude Code session with this skill installed:
+
+> Build a user journey from this doc: <link>
+
+or paste the steps directly. Claude copies the template, writes a journey file,
+and starts the dev server.
+
+## Working on the template itself
+
+```bash
+cd .claude/skills/user-journey/assets/template
+npm install
+npm run dev
+```
+
+It ships with one example journey that exercises every feature — a fork, a
+decision with a detour, each annotation kind, open questions, and a shared tail.
