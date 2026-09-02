@@ -7,6 +7,10 @@ import type { Journey } from '../types'
  *
  * It exercises every feature: a fork into two paths, a decision with a "no"
  * detour, each annotation kind, open questions, and a shared tail.
+ *
+ * The `questions` and `annotation`s here stand in for ones an author described
+ * themselves. Neither is ever invented on their behalf — a journey of bare
+ * boxes is perfectly normal.
  */
 export const exampleJourney: Journey = {
   slug: 'example',

@@ -40,19 +40,28 @@ What to look for in the prose:
 | "if new… / if existing…", two lists of steps | two `paths`, with a `forkQuestion` |
 | "is it X?" mid-flow, with a fallback to do first | a `decision` step with a `branch.detour` |
 | an outcome or system state ("cluster created") | `kind: 'action'` (a circle) |
-| a step that names fields, options, or metrics | an `annotation` — the screen behind that step |
+| a screen the author described, e.g. a `Screen:` line | an `annotation` — the sketch beneath that step |
 | "both paths then…" at the end | `tail` steps |
-| an open question, a TBD, a "we need to decide…" | `questions` on that step, drawn in red |
+| an open question the author wrote down | `questions` on that step, drawn in red |
 | a sub-list under one step | `bullets` |
 
 Two judgment calls worth making deliberately:
 
-- **Annotations are the point.** A diagram of bare boxes says little more than
-  the doc did. Where a step involves a real screen, sketch it — a spec card, a
-  panel, an open dropdown, a progress bar, a metrics grid. See
-  [references/components.md](references/components.md).
-- **Keep open questions.** Designers use these prototypes to argue about what's
-  unresolved. Anything the doc hedges on belongs in `questions`, not smoothed over.
+- **Sketches are author-driven too — don't invent them.** An `annotation` goes
+  on a step only where the author described a screen: the fields it has, the
+  options in a dropdown, the metrics on a dashboard. Draw what they described
+  and nothing more. Don't add a sketch because a step feels like it needs one,
+  don't fill a card with fields they never mentioned, and don't invent values,
+  labels, or numbers. A journey of bare boxes is a correct journey if that's
+  what the doc said. See [references/components.md](references/components.md)
+  for the shapes available, and offer them if they'd help — the author decides.
+- **Open questions belong to the author — never write your own.** `questions`
+  carries only what the doc actually says is unresolved, in the author's own
+  words. Don't infer them from gaps, don't turn your own uncertainty about the
+  flow into one, and don't add them because a step looks like it should have one.
+  A journey with no open questions is a normal journey. If something genuinely
+  seems undecided, raise it in the conversation and let the author decide whether
+  it goes in the diagram.
 
 ## 3. Build it
 

@@ -282,7 +282,9 @@ function ReadmeWindow({ onClose }: { onClose: () => void }) {
 
         <p style={{ margin: '0 0 6px 0', fontWeight: 700 }}>Reading the drawing</p>
         <ReadmeLegend />
-
+        <p style={{ margin: '0 0 4px 0', fontSize: '17px', fontWeight: 700 }}>
+          You can delete me when you're done.
+        </p>
       </div>
     </div>
   )

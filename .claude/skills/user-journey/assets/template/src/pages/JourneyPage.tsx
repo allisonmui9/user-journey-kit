@@ -105,7 +105,10 @@ function JourneyWalk({ journey }: { journey: Journey }) {
   const canvasWidth = Math.max(
     layout.minWidth,
     detourRight + GAP + 140,
-    completed.length && tailStep > 0 ? layout.tail[tailStep - 1].right + GAP + 140 : 0,
+    // As soon as one path finishes, the tail's convergence arrow and its first
+    // box have to fit — otherwise the 'continue' chip on that arrow lands past
+    // the canvas edge and can't be clicked.
+    completed.length ? layout.tail[Math.max(0, tailStep - 1)].right + GAP + 140 : 0,
     ...layout.rows.map((row) => {
       const n = shown(row.path.id)
       return n > 0 ? row.steps[n - 1].right + GAP + 140 : 0

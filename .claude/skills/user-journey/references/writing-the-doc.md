@@ -45,9 +45,12 @@ BOTH PATHS THEN
 - **`[outcome]`** → a circle. Use it for end states and system states, not for
   things the user does.
 - **`Screen:`** → the sketch drawn beneath that step. Name the fields, options,
-  or metrics; the more concrete, the more useful the sketch.
-- **`Open question:`** → drawn in red under that step. Keep them — they're
-  usually the reason the prototype gets built.
+  or metrics; the more concrete, the more useful the sketch. Steps without a
+  `Screen:` line stay as plain boxes — sketches only show up where you ask for
+  one, and only with the details you gave.
+- **`Open question:`** → drawn in red under that step. These are yours alone —
+  the diagram shows the ones you write and no others, so if you don't mark any,
+  none appear.
 - **Indented sub-items** under a step → bullets inside its box.
 
 ## Things worth being explicit about

@@ -11,6 +11,9 @@ export type { SelectOption, MetricTile, SpecRow }
 /**
  * The optional sketched UI that hangs beneath a step, tethered to it — the
  * screen the user would be looking at while taking that step.
+ *
+ * Author-driven: a step gets one only where the author described a screen, and
+ * it shows what they described. Nothing here is invented on their behalf.
  */
 export type Annotation =
   /** A settings card: header strip of real values, labelled rows below. */
@@ -52,7 +55,10 @@ export interface Step {
   }
   /** The sketched screen beneath this step */
   annotation?: Annotation
-  /** Unresolved design questions, drawn in red beneath this step's annotation */
+  /**
+   * Unresolved design questions, drawn in red beneath this step's annotation.
+   * Only ever the author's own — quoted from their write-up, never inferred.
+   */
   questions?: string[]
   /** Extra horizontal room after this step, if it needs breathing space */
   gapAfter?: number

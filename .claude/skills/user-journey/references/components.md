@@ -20,6 +20,11 @@ label. Good for naming the fields a configuration step covers.
 Each is `{ kind, ... }` on a step's `annotation`. Widths default sensibly; pass
 `width` only to override.
 
+**These are author-driven.** A step gets a sketch only where the author
+described a screen, and the sketch shows what they described — no invented
+fields, labels, options, or values. Most steps have no annotation at all. This
+page is a menu to offer them from, not a checklist to fill.
+
 ### `specCard` — a settings card
 
 A header strip of real values, then labelled rows. The workhorse for
@@ -44,7 +49,8 @@ annotation: {
 ```
 
 A row with no `value` renders as gray scribble — say "there are controls here"
-without drawing them. Use real values only where they matter to the story.
+without drawing them. Prefer that when the author named a field but not its
+contents; put a real `value` in only where they gave you one.
 
 ### `panel` — a small settings panel
 
@@ -103,6 +109,9 @@ questions: ['Should the routing tier live under sharding, or with cluster tier?'
 
 Drawn in red beneath that step's annotation. The layout reserves room for them,
 so long questions push the row's neighbors apart rather than colliding.
+
+Only ever the author's own questions, quoted from their doc — never one you
+thought of. Most steps have none.
 
 ## Adding a new annotation kind
 
