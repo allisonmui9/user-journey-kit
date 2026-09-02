@@ -8,6 +8,11 @@ interface RetroMenuBarProps {
   onBack?: () => void
   /** Extra menu items, e.g. "Start over" on a journey page */
   children?: ReactNode
+  /**
+   * The far-right slot. Defaults to a decorative "100%" readout; the journey
+   * page passes a working zoom control.
+   */
+  right?: ReactNode
 }
 
 const itemStyle = {
@@ -21,7 +26,7 @@ const itemStyle = {
 } as const
 
 /** The desktop menu bar, shared by every screen. */
-export default function RetroMenuBar({ title, onBack, children }: RetroMenuBarProps) {
+export default function RetroMenuBar({ title, onBack, children, right }: RetroMenuBarProps) {
   return (
     <div
       style={{
@@ -56,7 +61,9 @@ export default function RetroMenuBar({ title, onBack, children }: RetroMenuBarPr
       )}
       <span style={{ fontWeight: 700 }}>◆ {title ?? 'User Journeys'}</span>
       {children}
-      <span style={{ marginLeft: 'auto' }}>▚ 100% ▚</span>
+      <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {right ?? '▚ 100% ▚'}
+      </span>
     </div>
   )
 }

@@ -29,6 +29,15 @@ import { DESKTOP_BG, FONT_IMPORT, HAND_FONT_IMPORT, INK as RETRO_INK, RETRO_FONT
 
 type Answer = 'yes' | 'no'
 
+/**
+ * Zoom is for pulling back to see the whole flow, so 100% is the ceiling — the
+ * diagram is drawn at its intended size and never magnified past it.
+ */
+const MIN_ZOOM = 0.2
+const MAX_ZOOM = 1
+const ZOOM_STEP = 1.25
+const clampZoom = (z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z))
+
 /** Keyed on the slug, so navigating between journeys starts each one fresh. */
 export default function JourneyPage() {
   const { slug } = useParams()
@@ -65,6 +74,8 @@ function JourneyWalk({ journey }: { journey: Journey }) {
    * going back to walk another fork would pan to the tail instead of the fork.
    */
   const [onTail, setOnTail] = useState(false)
+  /** Viewport scale. 1 = the diagram's intended size; below that, zoomed out. */
+  const [zoom, setZoom] = useState(1)
 
   const reset = () => {
     setStarted(false)
@@ -142,17 +153,80 @@ function JourneyWalk({ journey }: { journey: Journey }) {
   }
 
   /**
+   * Change zoom while keeping one point of the diagram pinned under the same
+   * spot on screen — the viewport center by default, or the cursor when the
+   * gesture came from the trackpad. Without this the diagram slides away from
+   * whatever you were looking at.
+   */
+  const zoomTo = (next: number, anchor?: { x: number; y: number }) => {
+    const scroller = scrollerRef.current
+    const to = clampZoom(next)
+    setZoom(to)
+    if (!scroller) return
+
+    const from = zoom
+    if (to === from) return
+    // Where the anchor sits inside the viewport, in px
+    const ax = anchor ? anchor.x : scroller.clientWidth / 2
+    const ay = anchor ? anchor.y : scroller.clientHeight / 2
+    // The user-unit point currently under it
+    const ux = (scroller.scrollLeft + ax) / from
+    const uy = (scroller.scrollTop + ay) / from
+
+    // Applied after React has resized the SVG, or the scroller would clamp
+    // these offsets against the old, smaller scroll extent.
+    requestAnimationFrame(() => {
+      scroller.scrollLeft = ux * to - ax
+      scroller.scrollTop = uy * to - ay
+    })
+  }
+
+  /** Pull back just far enough to fit the whole diagram in the viewport. */
+  const zoomToFit = () => {
+    const scroller = scrollerRef.current
+    if (!scroller) return
+    const fit = Math.min(scroller.clientWidth / canvasWidth, scroller.clientHeight / layout.height)
+    zoomTo(fit * 0.95)
+  }
+
+  /** Trackpad pinch and ctrl/⌘+scroll zoom, anchored on the cursor. */
+  useEffect(() => {
+    const scroller = scrollerRef.current
+    if (!scroller) return
+
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return // plain scrolling still pans
+      e.preventDefault()
+      const rect = scroller.getBoundingClientRect()
+      zoomTo(zoom * Math.exp(-e.deltaY / 220), {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      })
+    }
+
+    // Not passive: the browser's own page zoom has to be suppressed.
+    scroller.addEventListener('wheel', onWheel, { passive: false })
+    return () => scroller.removeEventListener('wheel', onWheel)
+  }, [zoom, canvasWidth, layout.height])
+
+  /**
    * Follow the flow as it unfolds: pan the newest step into view, the way a
-   * Figma viewport follows a cursor. The SVG renders at its intrinsic pixel
-   * size, so user units map 1:1 to px.
+   * Figma viewport follows a cursor. Focus points are in user units, so they
+   * scale by `zoom` to reach the pixel offsets the scroller wants.
    */
   useEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller) return
 
     const focus = focusPoint()
-    const toX = Math.max(0, Math.min(focus.x - scroller.clientWidth / 2, canvasWidth - scroller.clientWidth))
-    const toY = Math.max(0, Math.min(focus.y - scroller.clientHeight / 2, layout.height - scroller.clientHeight))
+    const toX = Math.max(
+      0,
+      Math.min(focus.x * zoom - scroller.clientWidth / 2, canvasWidth * zoom - scroller.clientWidth),
+    )
+    const toY = Math.max(
+      0,
+      Math.min(focus.y * zoom - scroller.clientHeight / 2, layout.height * zoom - scroller.clientHeight),
+    )
     const fromX = scroller.scrollLeft
     const fromY = scroller.scrollTop
     const dx = toX - fromX
@@ -195,7 +269,18 @@ function JourneyWalk({ journey }: { journey: Journey }) {
         .flow-scroller::-webkit-scrollbar { display: none; }
       `}</style>
 
-      <RetroMenuBar title={journey.title} onBack={() => navigate('/')}>
+      <RetroMenuBar
+        title={journey.title}
+        onBack={() => navigate('/')}
+        right={
+          <ZoomControl
+            zoom={zoom}
+            onZoom={(z) => zoomTo(z)}
+            onFit={zoomToFit}
+            onReset={() => zoomTo(1)}
+          />
+        }
+      >
         {started && (
           <button onClick={reset} style={retroMenuItemStyle}>
             Start over
@@ -209,10 +294,12 @@ function JourneyWalk({ journey }: { journey: Journey }) {
         // A fixed viewport, so the diagram pans within it on both axes
         style={{ overflow: 'auto', height: 'calc(100vh - 60px)' }}
       >
+        {/* The viewBox stays in user units while width/height carry the zoom,
+            so every stroke scales as vector art rather than being re-laid out. */}
         <svg
           viewBox={`0 0 ${canvasWidth} ${layout.height}`}
-          width={canvasWidth}
-          height={layout.height}
+          width={canvasWidth * zoom}
+          height={layout.height * zoom}
           style={{ display: 'block' }}
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -320,6 +407,63 @@ function JourneyWalk({ journey }: { journey: Journey }) {
         </svg>
       </div>
     </div>
+  )
+}
+
+/**
+ * The zoom readout in the menu bar, doubling as the control: −/+ step out and
+ * in, "fit" frames the whole diagram, and clicking the percentage returns to
+ * 100%. Styled as retro chips to match the rest of the chrome.
+ */
+function ZoomControl({
+  zoom,
+  onZoom,
+  onFit,
+  onReset,
+}: {
+  zoom: number
+  onZoom: (zoom: number) => void
+  onFit: () => void
+  onReset: () => void
+}) {
+  const chip = {
+    ...retroMenuItemStyle,
+    padding: '0 6px',
+    border: `2px solid ${RETRO_INK}`,
+    background: '#fff',
+    lineHeight: '18px',
+  } as const
+  const disabled = { opacity: 0.35, cursor: 'default' } as const
+
+  return (
+    <>
+      <button
+        onClick={() => onZoom(zoom / ZOOM_STEP)}
+        disabled={zoom <= MIN_ZOOM}
+        title="Zoom out"
+        style={{ ...chip, ...(zoom <= MIN_ZOOM ? disabled : null) }}
+      >
+        −
+      </button>
+      <button
+        onClick={onReset}
+        title="Back to 100%"
+        style={{ ...retroMenuItemStyle, minWidth: '52px' }}
+      >
+        ▚ {Math.round(zoom * 100)}% ▚
+      </button>
+      <button
+        onClick={() => onZoom(zoom * ZOOM_STEP)}
+        disabled={zoom >= MAX_ZOOM}
+        title="Zoom in (100% max)"
+        style={{ ...chip, ...(zoom >= MAX_ZOOM ? disabled : null) }}
+      >
+        +
+      </button>
+      <button onClick={onFit} title="Fit the whole journey on screen" style={chip}>
+        fit
+      </button>
+    </>
   )
 }
 
