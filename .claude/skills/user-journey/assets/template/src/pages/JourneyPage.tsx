@@ -108,7 +108,10 @@ function JourneyWalk({ journey }: { journey: Journey }) {
     // As soon as one path finishes, the tail's convergence arrow and its first
     // box have to fit — otherwise the 'continue' chip on that arrow lands past
     // the canvas edge and can't be clicked.
-    completed.length ? layout.tail[Math.max(0, tailStep - 1)].right + GAP + 140 : 0,
+    // A journey with no tail has nothing to fit here.
+    completed.length && layout.tail.length
+      ? layout.tail[Math.min(layout.tail.length - 1, Math.max(0, tailStep - 1))].right + GAP + 140
+      : 0,
     ...layout.rows.map((row) => {
       const n = shown(row.path.id)
       return n > 0 ? row.steps[n - 1].right + GAP + 140 : 0
